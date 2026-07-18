@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Snapshot</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Snapshot</h1>
+      <p class="tagline">Never lose your workspace.</p>
+    </header>
+
+    <div class="actions">
+      <button id="exportBtn" class="btn primary">Export Workspace</button>
+      <button id="importBtn" class="btn secondary">Import Workspace</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="last-backup">
+      <span class="label">Last Backup</span>
+      <span id="lastBackupValue" class="value">Never</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
