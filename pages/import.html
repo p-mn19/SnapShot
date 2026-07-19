@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Snapshot — Import</title>
+  <link rel="stylesheet" href="../styles/shared.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Choose Backup</h1>
+
+    <div class="file-input-wrapper">
+      <input type="file" id="fileInput" accept="application/json,.json" />
+    </div>
+
+    <div id="statsBlock" class="stats" style="display: none;">
+      <div class="stat-row">
+        <span class="label">Windows</span>
+        <span id="windowCount" class="value">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Groups</span>
+        <span id="groupCount" class="value">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Tabs</span>
+        <span id="tabCount" class="value">—</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="restoreBtn" class="btn primary" disabled>Restore</button>
+      <button id="cancelBtn" class="btn secondary">Cancel</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="../scripts/workspace-service.js"></script>
+  <script src="../scripts/parser.js"></script>
+  <script src="../scripts/validator.js"></script>
+  <script src="../scripts/restore-service.js"></script>
+  <script src="import.js"></script>
+</body>
+</html>

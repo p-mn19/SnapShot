@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Snapshot — Export</title>
+  <link rel="stylesheet" href="../styles/shared.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Export Workspace</h1>
+
+    <div class="stats">
+      <div class="stat-row">
+        <span class="label">Windows</span>
+        <span id="windowCount" class="value">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Groups</span>
+        <span id="groupCount" class="value">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Tabs</span>
+        <span id="tabCount" class="value">—</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="exportBtn" class="btn primary" disabled>Export</button>
+      <button id="cancelBtn" class="btn secondary">Cancel</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="../scripts/workspace-service.js"></script>
+  <script src="../scripts/serializer.js"></script>
+  <script src="export.js"></script>
+</body>
+</html>
