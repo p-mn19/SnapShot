@@ -1,8 +1,24 @@
-// popup.js runs whenever the popup opens.
-// It has access to chrome.* APIs because manifest.json granted the permissions.
-
 document.addEventListener("DOMContentLoaded", async () => {
-  await renderLastBackupTime();
+  await initTheme();
+
+  const authLoading = document.getElementById("authLoading");
+  const loggedOutView = document.getElementById("loggedOutView");
+  const loggedInView = document.getElementById("loggedInView");
+
+  await renderAuthState();
+
+  document.getElementById("themeToggle").addEventListener("click", async () => {
+    await toggleTheme();
+  });
+
+  document.getElementById("signInBtn").addEventListener("click", () => {
+    openPage("login.html");
+  });
+
+  document.getElementById("signOutBtn").addEventListener("click", async () => {
+    await signOut();
+    await renderAuthState();
+  });
 
   document.getElementById("exportBtn").addEventListener("click", () => {
     openPage("export.html");
@@ -11,39 +27,50 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("importBtn").addEventListener("click", () => {
     openPage("import.html");
   });
+
+  document.getElementById("backupsBtn").addEventListener("click", () => {
+    openPage("backups.html");
+  });
+
+  async function renderAuthState() {
+    authLoading.style.display = "block";
+    loggedOutView.style.display = "none";
+    loggedInView.style.display = "none";
+
+    const user = await getCurrentUser();
+
+    authLoading.style.display = "none";
+
+    if (user) {
+      document.getElementById("userEmail").textContent = user.email;
+      loggedInView.style.display = "block";
+      await renderLastBackupTime();
+    } else {
+      loggedOutView.style.display = "block";
+    }
+  }
+
+  async function renderLastBackupTime() {
+    const data = await chrome.storage.local.get("lastBackupTimestamp");
+    const el = document.getElementById("lastBackupValue");
+
+    if (!data.lastBackupTimestamp) {
+      el.textContent = "Never";
+      return;
+    }
+
+    const date = new Date(data.lastBackupTimestamp);
+    el.textContent = date.toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
 });
 
-/**
- * Opens one of our full extension pages (export.html / import.html) in a new tab.
- * We use a full tab instead of a bigger popup because:
- * 1. Popups close automatically if they lose focus (e.g. user clicks another window).
- * 2. Export/Import need more room for the workspace summary preview.
- */
 function openPage(pageName) {
   chrome.tabs.create({
     url: chrome.runtime.getURL(`pages/${pageName}`)
-  });
-}
-
-/**
- * Reads the last backup timestamp from chrome.storage.local and displays it.
- * chrome.storage.local is a small key-value store built into the browser,
- * scoped privately to this extension. Nothing here ever leaves the device.
- */
-async function renderLastBackupTime() {
-  const data = await chrome.storage.local.get("lastBackupTimestamp");
-  const el = document.getElementById("lastBackupValue");
-
-  if (!data.lastBackupTimestamp) {
-    el.textContent = "Never";
-    return;
-  }
-
-  const date = new Date(data.lastBackupTimestamp);
-  el.textContent = date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
   });
 }

@@ -1,0 +1,86 @@
+:root,
+html[data-theme="light"] {
+  --bg-page: #eef0f3;       /* cool paper, not warm cream */
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-subtle: #f1f2f5;
+  --border-color: #dde0e5;
+ 
+  --text-primary: #16181d;
+  --text-secondary: #676e79;
+ 
+  --accent-primary: #b3452f;      /* rust / safelight red */
+  --accent-primary-hover: #963a27;
+  --accent-primary-text: #ffffff;
+ 
+  --success-color: #3f9142;
+  --error-color: #c1443a;
+  --error-bg: #fbeceb;
+ 
+  --shadow-card: 0 1px 3px rgba(20, 20, 20, 0.08);
+  --corner-mark: rgba(179, 69, 47, 0.55); /* viewfinder corner brackets */
+}
+ 
+html[data-theme="dark"] {
+  --bg-page: #14161a;
+  --bg-card: #1c1f24;
+  --bg-input: #24282e;
+  --bg-subtle: #262a30;
+  --border-color: #33383f;
+ 
+  --text-primary: #eef0f3;
+  --text-secondary: #9aa1ab;
+ 
+  --accent-primary: #d9613f;      /* brighter rust for dark backgrounds */
+  --accent-primary-hover: #c65431;
+  --accent-primary-text: #14161a;
+ 
+  --success-color: #4fbf55;
+  --error-color: #e5695e;
+  --error-bg: #3a2320;
+ 
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --corner-mark: rgba(217, 97, 63, 0.6);
+}
+ 
+body {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+ 
+/* Monospace face for numeric readouts (stat counts, dates) — a small,
+   deliberate nod to camera EXIF / contact-sheet metadata. */
+.mono {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+ 
+/* Viewfinder corner brackets — the one signature visual element,
+   applied to .card. Four small L-shaped marks, like a camera focus frame. */
+.card {
+  position: relative;
+}
+ 
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+ 
+.card::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--corner-mark);
+  border-left: 2px solid var(--corner-mark);
+  border-radius: 4px 0 0 0;
+}
+ 
+.card::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--corner-mark);
+  border-right: 2px solid var(--corner-mark);
+  border-radius: 0 0 4px 0;
+}

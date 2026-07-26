@@ -27,8 +27,21 @@
     "tabs",
     "tabGroups",
     "storage",
-    "downloads"
+    "downloads",
+    "identity"
   ],
 
-  "host_permissions": []
+  "host_permissions": [
+    "https://identitytoolkit.googleapis.com/*",
+    "https://securetoken.googleapis.com/*",
+    "https://firestore.googleapis.com/*"
+  ],
+
+  "oauth2": {
+    "client_id": "385423659392-r1vf58up5c80kmk1fsa55bcjmoj8et2p.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  }
 }

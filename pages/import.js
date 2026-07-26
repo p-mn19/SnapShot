@@ -1,10 +1,8 @@
-// import.js
-// Runs on the Import page. Depends on parser.js, validator.js, and
-// restore-service.js being loaded first as plain scripts (see import.html).
-
 let pendingWorkspace = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await initTheme();
+
   const fileInput = document.getElementById("fileInput");
   const restoreBtn = document.getElementById("restoreBtn");
   const cancelBtn = document.getElementById("cancelBtn");

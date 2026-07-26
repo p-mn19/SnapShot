@@ -7,24 +7,55 @@
 </head>
 <body>
   <div class="container">
-    <header>
+  <header>
+    <div class="header-text">
       <h1>Snapshot</h1>
       <p class="tagline">Never lose your workspace.</p>
-    </header>
+    </div>
+    <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">
+      <span class="track"><span class="thumb"></span></span>
+    </button>
+  </header>
 
-    <div class="actions">
-      <button id="exportBtn" class="btn primary">Export Workspace</button>
-      <button id="importBtn" class="btn secondary">Import Workspace</button>
+    <!-- Shown while we're still checking whether a session exists -->
+    <div id="authLoading" class="auth-state">
+      <p class="muted">Checking sign-in status…</p>
     </div>
 
-    <div class="divider"></div>
+    <!-- Shown when nobody is signed in -->
+    <div id="loggedOutView" class="auth-state" style="display: none;">
+      <p class="muted" style="margin-bottom: 12px;">
+        Sign in to save backups to your account.
+      </p>
+      <button id="signInBtn" class="btn primary">Sign in with Google</button>
+    </div>
 
-    <div class="last-backup">
-      <span class="label">Last Backup</span>
-      <span id="lastBackupValue" class="value">Never</span>
+    <!-- Shown when a user is signed in -->
+    <div id="loggedInView" class="auth-state" style="display: none;">
+      <div class="account-row">
+        <span id="userEmail" class="account-email"></span>
+        <button id="signOutBtn" class="link-btn">Sign out</button>
+      </div>
+
+      <div class="actions">
+        <button id="exportBtn" class="btn primary">Export Workspace</button>
+        <button id="importBtn" class="btn secondary">Import Workspace</button>
+        <button id="backupsBtn" class="btn secondary">My Backups</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="last-backup">
+        <span class="label">Last Backup</span>
+        <span id="lastBackupValue" class="value">Never</span>
+      </div>
     </div>
   </div>
-
+  <script src="../scripts/theme-manager.js"></script>
+  <script src="../config/firebase-config.js"></script>
+  <script src="../scripts/auth-service.js"></script>
   <script src="popup.js"></script>
+</body>
+</html>
 </body>
 </html>

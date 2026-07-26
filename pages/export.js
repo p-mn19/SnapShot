@@ -1,14 +1,13 @@
-// export.js
-// This runs on the Export page. It loads workspace-service.js and
-// serializer.js as plain <script> tags first (see export.html), so their
-// functions (collectWorkspace, summarizeWorkspace, serializeAndDownload)
-// are just available here as regular globals — no imports needed.
 
 let currentWorkspace = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  await initTheme();
+
   const exportBtn = document.getElementById("exportBtn");
   const cancelBtn = document.getElementById("cancelBtn");
+  const saveToAccountBtn = document.getElementById("saveToAccountBtn");
+  const signInHint = document.getElementById("signInHint");
   const statusEl = document.getElementById("status");
 
   try {
@@ -23,6 +22,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Only allow exporting once we actually have data to export.
     exportBtn.disabled = false;
+
+    // "Save to Account" additionally requires the user to be signed in —
+    // check that separately from having workspace data ready.
+    const user = await getCurrentUser();
+    if (user) {
+      saveToAccountBtn.disabled = false;
+    } else {
+      signInHint.style.display = "block";
+    }
   } catch (err) {
     statusEl.textContent = "Couldn't read browser state. Try reopening this page.";
     statusEl.className = "status error";
@@ -42,6 +50,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusEl.textContent = "Export failed. Please try again.";
       statusEl.className = "status error";
       exportBtn.disabled = false;
+      console.error(err);
+    }
+  });
+
+  saveToAccountBtn.addEventListener("click", async () => {
+    saveToAccountBtn.disabled = true;
+    statusEl.textContent = "Saving to your account…";
+    statusEl.className = "status";
+
+    try {
+      await saveBackupToCloud(currentWorkspace);
+      statusEl.textContent = "✓ Saved to your account.";
+      statusEl.className = "status success";
+    } catch (err) {
+      statusEl.textContent = "Couldn't save to your account: " + err.message;
+      statusEl.className = "status error";
+      saveToAccountBtn.disabled = false;
       console.error(err);
     }
   });

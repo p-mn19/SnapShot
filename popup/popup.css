@@ -7,8 +7,8 @@
 body {
   width: 280px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #ffffff;
-  color: #1a1a1a;
+  background: var(--bg-page);
+  color: var(--text-primary);
 }
 
 .container {
@@ -16,8 +16,14 @@ body {
 }
 
 header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 20px;
+}
+
+.header-text {
+  text-align: left;
 }
 
 h1 {
@@ -28,8 +34,48 @@ h1 {
 
 .tagline {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin-top: 4px;
+}
+
+/* Theme toggle — small pill switch, top-right of the popup */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.theme-toggle .track {
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--border-color);
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+.theme-toggle .thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  transition: transform 0.15s ease;
+}
+
+html[data-theme="dark"] .theme-toggle .track {
+  background: var(--accent-primary);
+}
+
+html[data-theme="dark"] .theme-toggle .thumb {
+  transform: translateX(14px);
 }
 
 .actions {
@@ -45,26 +91,32 @@ h1 {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .btn.primary {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text);
+}
+
+.btn.primary:hover {
+  background: var(--accent-primary-hover);
+  opacity: 1;
 }
 
 .btn.secondary {
-  background: #f3f4f6;
-  color: #1a1a1a;
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .divider {
   height: 1px;
-  background: #e5e7eb;
+  background: var(--border-color);
   margin: 18px 0;
 }
 
@@ -76,9 +128,49 @@ h1 {
 }
 
 .last-backup .label {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .last-backup .value {
   font-weight: 600;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.auth-state {
+  text-align: center;
+}
+
+.muted {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.account-email {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
 }
