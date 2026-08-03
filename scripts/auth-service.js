@@ -6,20 +6,12 @@ const AUTH_STORAGE_KEY = "snapshotAuthUser";
  * cancels or something fails.
  */
 async function signIn() {
-  // Step 1: get a Google OAuth access token. `interactive: true` means
-  // Chrome will show the account picker / consent screen if needed.
-  const googleAccessToken = await new Promise((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
-      if (chrome.runtime.lastError || !token) {
-        reject(new Error(chrome.runtime.lastError?.message || "Sign-in was cancelled."));
-      } else {
-        resolve(token);
-      }
-    });
-  });
+  // Step 1 + 2: open Google's sign-in page in a popup and get back an
+  // access token via the redirect URL.
+  const googleAccessToken = await getGoogleAccessTokenViaWebAuthFlow();
  
-  // Step 2: exchange the Google token for a Firebase user, via Firebase's
-  // Identity Toolkit REST API (this is the SDK-free equivalent of calling
+  // Step 3: exchange the Google token for a Firebase user, via Firebase's
+  // Identity Toolkit REST API (the SDK-free equivalent of calling
   // signInWithPopup(googleProvider) in a normal web app).
   const response = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=${FIREBASE_CONFIG.apiKey}`,
@@ -54,27 +46,55 @@ async function signIn() {
 }
  
 /**
- * Signs the current user out: clears Chrome's cached Google token and
- * removes the stored Firebase session.
+ * Opens Google's OAuth consent screen in a popup via launchWebAuthFlow and
+ * returns the access_token it redirects back with. This is the piece that
+ * makes sign-in work in any Chromium-based browser, not just Chrome —
+ * unlike getAuthToken(), it doesn't rely on the browser's own built-in
+ * Google account session.
+ */
+function getGoogleAccessTokenViaWebAuthFlow() {
+  return new Promise((resolve, reject) => {
+    const redirectUri = chrome.identity.getRedirectURL();
+ 
+    const authUrl =
+      "https://accounts.google.com/o/oauth2/v2/auth" +
+      `?client_id=${encodeURIComponent(OAUTH_CLIENT_ID)}` +
+      `&response_type=token` + // implicit flow — no client secret needed
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&scope=${encodeURIComponent("https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")}`;
+ 
+    chrome.identity.launchWebAuthFlow(
+      { url: authUrl, interactive: true },
+      (responseUrl) => {
+        if (chrome.runtime.lastError || !responseUrl) {
+          reject(new Error(chrome.runtime.lastError?.message || "Sign-in was cancelled."));
+          return;
+        }
+ 
+        // Google redirects back with the token in the URL's fragment, e.g.
+        // https://<ext-id>.chromiumapp.org/#access_token=...&expires_in=...
+        const fragment = responseUrl.split("#")[1] || "";
+        const params = new URLSearchParams(fragment);
+        const accessToken = params.get("access_token");
+ 
+        if (!accessToken) {
+          reject(new Error("Google sign-in did not return an access token."));
+          return;
+        }
+ 
+        resolve(accessToken);
+      }
+    );
+  });
+}
+ 
+/**
+ * Signs the current user out by clearing the stored Firebase session.
+ * (No cached browser-level token to clear here, unlike the old
+ * getAuthToken()-based approach — launchWebAuthFlow doesn't leave one
+ * behind, so there's nothing extra to revoke on the browser side.)
  */
 async function signOut() {
-  const stored = await chrome.storage.local.get(AUTH_STORAGE_KEY);
-  const user = stored[AUTH_STORAGE_KEY];
- 
-  if (user) {
-    // Also revoke/clear the cached Google token so the next sign-in
-    // shows the account picker again rather than silently reusing it.
-    await new Promise((resolve) => {
-      chrome.identity.getAuthToken({ interactive: false }, (token) => {
-        if (token) {
-          chrome.identity.removeCachedAuthToken({ token }, resolve);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
- 
   await chrome.storage.local.remove(AUTH_STORAGE_KEY);
 }
  
@@ -128,3 +148,4 @@ async function getValidIdToken() {
   await chrome.storage.local.set({ [AUTH_STORAGE_KEY]: updatedUser });
   return updatedUser.idToken;
 }
+ 

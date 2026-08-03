@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Snapshot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Never lose your browser workspace again. Back up and restore windows, tab groups, and tabs.",
 
   "action": {
